@@ -1,9 +1,11 @@
+'use strict';
+
 const CARD_QUANTITY = 3;
-const mainContainer = document.querySelector('.main');
-const controlContainer = mainContainer.querySelector('.control');
+const mainContainer = document.querySelector(`.main`);
+const controlContainer = mainContainer.querySelector(`.control`);
 
 const getControlElement = () => {
-	return `
+  return `
     <section class="control__btn-wrap">
       <input
         type="radio"
@@ -36,7 +38,7 @@ const getControlElement = () => {
 };
 
 const getSearchElement = () => {
-	return `
+  return `
 		<section class="main__search search container">
       <input
         type="text"
@@ -50,7 +52,7 @@ const getSearchElement = () => {
 };
 
 const getFilterElement = () => {
-	return `
+  return `
 		<section class="main__filter filter container">
 			<input
         type="radio"
@@ -123,8 +125,8 @@ const getFilterElement = () => {
 };
 
 const getCardElement = (isEdit = false) => {
-	return `
-		<article class="card card--black ${isEdit ? 'card--edit' : ''}">
+  return `
+		<article class="card card--black ${isEdit ? `card--edit` : ``}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
@@ -193,7 +195,7 @@ const getCardElement = (isEdit = false) => {
 };
 
 const getBoardElement = () => {
-	return `
+  return `
 		<section class="board container">
 	    <div class="board__filter-list">
 	      <a href="#" class="board__filter">SORT BY DEFAULT</a>
@@ -207,23 +209,23 @@ const getBoardElement = () => {
 
 
 const getLoadMoreElement = () => {
-	return `
+  return `
     <button class="load-more" type="button">load more</button>
   `;
 };
 
-const renderComponent = (container, element, quantity = 1) => {
-	for (let i = 0; i < quantity; i++) {
-		container.insertAdjacentHTML('beforeend', element);
-	}
+const renderComponent = (container, markup, quantity = 1) => {
+  for (let i = 0; i < quantity; i++) {
+    container.insertAdjacentHTML(`beforeend`, markup);
+  }
 };
 
 const renderTasksBoard = () => {
-	const boardContainer = document.querySelector('.board');
-	const boardTasksContainer = boardContainer.querySelector('.board__tasks');
-	renderComponent(boardTasksContainer, getCardElement(true));
-	renderComponent(boardTasksContainer, getCardElement(), CARD_QUANTITY);
-	renderComponent(boardContainer, getLoadMoreElement());
+  const boardContainer = document.querySelector(`.board`);
+  const boardTasksContainer = boardContainer.querySelector(`.board__tasks`);
+  renderComponent(boardTasksContainer, getCardElement(true));
+  renderComponent(boardTasksContainer, getCardElement(), CARD_QUANTITY);
+  renderComponent(boardContainer, getLoadMoreElement());
 };
 
 renderComponent(controlContainer, getControlElement());
