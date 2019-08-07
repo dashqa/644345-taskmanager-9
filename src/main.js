@@ -219,10 +219,11 @@ const renderComponent = (container, element, quantity = 1) => {
 };
 
 const renderTasksBoard = () => {
-	const boardTasksContainer = document.querySelector('.board__tasks');
+	const boardContainer = document.querySelector('.board');
+	const boardTasksContainer = boardContainer.querySelector('.board__tasks');
 	renderComponent(boardTasksContainer, getCardElement(true));
 	renderComponent(boardTasksContainer, getCardElement(), CARD_QUANTITY);
-	renderComponent(boardTasksContainer, getLoadMoreElement());
+	renderComponent(boardContainer, getLoadMoreElement());
 };
 
 renderComponent(controlContainer, getControlElement());
