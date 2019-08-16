@@ -1,31 +1,58 @@
-import { getNavMenuMarkup } from "./components/nav-menu";
-import { getSearchMarkup } from "./components/search";
-import { getFilterMarkup } from "./components/filter";
-import { getBoardMarkup } from "./components/task-board";
-import { getCardMarkup } from "./components/task-card";
-import { getLoadMoreMarkup } from "./components/load-more";
+import { getNavMenuComponent } from "./components/nav-menu";
+import { getSearchComponent } from "./components/search";
+import { getBoardComponent } from "./components/board";
+import { getCardComponent } from "./components/card";
+import { getMock } from './data/mock';
+import { getFilterComponent } from "./components/filter";
 
-const CARD_QUANTITY = 3;
+const CARDS_QUANTITY = 15;
+const CARDS_PER_PAGE = 8;
 const mainContainer = document.querySelector(`.main`);
 const controlContainer = mainContainer.querySelector(`.control`);
 
-const renderComponent = (container, markup, quantity = 1) => {
-  for (let i = 0; i < quantity; i++) {
-    container.insertAdjacentHTML(`beforeend`, markup);
+const state = {
+  tasks: getMock(CARDS_QUANTITY),
+  quantityCounter: 0,
+
+  set updatedQuantityCounter(quantity) {
+    this.quantityCounter += quantity;
+  },
+  get leftToShow() {
+    return this.tasks.length - this.quantityCounter;
   }
 };
 
-const renderTasksBoard = () => {
-  const boardContainer = document.querySelector(`.board`);
-  const boardTasksContainer = boardContainer.querySelector(`.board__tasks`);
-  renderComponent(boardTasksContainer, getCardMarkup(true));
-  renderComponent(boardTasksContainer, getCardMarkup(), CARD_QUANTITY);
-  renderComponent(boardContainer, getLoadMoreMarkup());
+let tasksForRender = state.tasks;
+
+const renderComponent = (container, Component) => {
+  container.insertAdjacentHTML(`beforeend`, Component);
 };
 
-renderComponent(controlContainer, getNavMenuMarkup());
-renderComponent(mainContainer, getSearchMarkup());
-renderComponent(mainContainer, getFilterMarkup());
-renderComponent(mainContainer, getBoardMarkup());
-renderTasksBoard();
+const renderTasks = (start, end) => {
+  const boardTasksElement = document.querySelector(`.board__tasks`);
+    tasksForRender = state.tasks.slice(start, end);
+    state.updatedQuantityCounter = tasksForRender.length;
+  renderComponent(boardTasksElement, getCardComponent(tasksForRender));
+
+  if (state.quantityCounter >= CARDS_QUANTITY || CARDS_QUANTITY < CARDS_PER_PAGE) {
+    buttonElement.remove();
+  }
+};
+
+const onClickMoreButton = () => {
+  const start = state.quantityCounter;
+  let end = state.quantityCounter + state.leftToShow;
+  renderTasks(start, end);
+};
+
+renderComponent(controlContainer, getNavMenuComponent());
+renderComponent(mainContainer, getSearchComponent());
+renderComponent(mainContainer, getFilterComponent(state.tasks));
+renderComponent(mainContainer, getBoardComponent());
+renderTasks(0, CARDS_PER_PAGE);
+
+const buttonElement = document.querySelector(`.load-more`);
+buttonElement.addEventListener(`click`, onClickMoreButton);
+
+export default state;
 
