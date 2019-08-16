@@ -28,10 +28,11 @@ const renderComponent = (container, Component) => {
   container.insertAdjacentHTML(`beforeend`, Component);
 };
 
-const renderTasks = (start, end) => {
+const renderTasks = (start = 0, end = CARDS_PER_PAGE) => {
   const boardTasksElement = document.querySelector(`.board__tasks`);
-    tasksForRender = state.tasks.slice(start, end);
-    state.updatedQuantityCounter = tasksForRender.length;
+
+  tasksForRender = state.tasks.slice(start, end);
+  state.updatedQuantityCounter = tasksForRender.length;
   renderComponent(boardTasksElement, getCardComponent(tasksForRender));
 
   if (state.quantityCounter >= CARDS_QUANTITY || CARDS_QUANTITY < CARDS_PER_PAGE) {
@@ -41,7 +42,7 @@ const renderTasks = (start, end) => {
 
 const onClickMoreButton = () => {
   const start = state.quantityCounter;
-  let end = state.quantityCounter + state.leftToShow;
+  const end = state.quantityCounter + state.leftToShow;
   renderTasks(start, end);
 };
 
@@ -49,7 +50,7 @@ renderComponent(controlContainer, getNavMenuComponent());
 renderComponent(mainContainer, getSearchComponent());
 renderComponent(mainContainer, getFilterComponent(state.tasks));
 renderComponent(mainContainer, getBoardComponent());
-renderTasks(0, CARDS_PER_PAGE);
+renderTasks();
 
 const buttonElement = document.querySelector(`.load-more`);
 buttonElement.addEventListener(`click`, onClickMoreButton);
