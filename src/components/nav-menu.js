@@ -1,4 +1,4 @@
-export const getNavMenuMarkup = () => {
+export const getNavMenuComponent = () => {
   return `
     <section class="control__btn-wrap">
       <input
