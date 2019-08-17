@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomBool } from './../utils';
+import {getRandomInt, getRandomBool} from './../utils';
 import moment from 'moment';
 
 const MILLISECONDS_PER_WEEK = 7 * 24 * 3600 * 1000;
