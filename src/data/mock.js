@@ -1,4 +1,4 @@
-import {getRandomNum, getRandomBool} from './../utils';
+import { getRandomInt, getRandomBool } from './../utils';
 import moment from 'moment';
 
 const MILLISECONDS_PER_WEEK = 7 * 24 * 3600 * 1000;
@@ -9,9 +9,9 @@ const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 const generateData = () => ({
   get description() {
-    return DESCRIPTIONS[getRandomNum(0, DESCRIPTIONS.length - 1)];
+    return DESCRIPTIONS[getRandomInt(0, DESCRIPTIONS.length - 1)];
   },
-  dueDate: moment(getRandomNum(Date.now() - MILLISECONDS_PER_WEEK, Date.now() + MILLISECONDS_PER_WEEK)),
+  dueDate: moment(getRandomInt(Date.now() - MILLISECONDS_PER_WEEK, Date.now() + MILLISECONDS_PER_WEEK)),
   repeatingDays: {
     'Mo': getRandomBool(),
     'Tu': false,
@@ -23,18 +23,19 @@ const generateData = () => ({
   },
   get tags() {
     const tempSet = new Set();
-    for (let i = 0; i < getRandomNum(0, MAX_TAGS); i++) {
-      tempSet.add(TAGS[getRandomNum(0, TAGS.length - 1)]);
+    const tagsQuantity = getRandomInt(0, MAX_TAGS);
+    for (let i = 0; i < tagsQuantity; i++) {
+      tempSet.add(TAGS[getRandomInt(0, TAGS.length - 1)]);
     }
     return tempSet;
   },
   get color() {
-    return COLORS[getRandomNum(0, COLORS.length - 1)];
+    return COLORS[getRandomInt(0, COLORS.length - 1)];
   },
   isFavorite: getRandomBool(),
   isArchive: getRandomBool(),
 });
 
 export const getMock = (quantity) => {
-  return new Array(quantity).fill(``).map(generateData);
+  return [...Array(quantity)].map(generateData);
 };

@@ -35,7 +35,7 @@ export const getFilterComponent = (tasks) => {
           class="filter__input visually-hidden"
           name="filter"
           ${isChecked ? `checked` : ``}
-          ${count === 0 ? `disabled` : ``}
+          ${!count ? `disabled` : ``}
         />
         <label for="filter__${title}" class="filter__label">
           ${title}

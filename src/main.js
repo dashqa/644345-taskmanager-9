@@ -14,12 +14,12 @@ const state = {
   tasks: getMock(CARDS_QUANTITY),
   quantityCounter: 0,
 
-  set updatedQuantityCounter(quantity) {
-    this.quantityCounter += quantity;
-  },
   get leftToShow() {
     return this.tasks.length - this.quantityCounter;
-  }
+  },
+  updateQuantityCounter(quantity) {
+    this.quantityCounter += quantity;
+  },
 };
 
 let tasksForRender = state.tasks;
@@ -32,7 +32,7 @@ const renderTasks = (start = 0, end = CARDS_PER_PAGE) => {
   const boardTasksElement = document.querySelector(`.board__tasks`);
 
   tasksForRender = state.tasks.slice(start, end);
-  state.updatedQuantityCounter = tasksForRender.length;
+  state.updateQuantityCounter(tasksForRender.length);
   renderComponent(boardTasksElement, getCardComponent(tasksForRender));
 
   if (state.quantityCounter >= CARDS_QUANTITY || CARDS_QUANTITY < CARDS_PER_PAGE) {
