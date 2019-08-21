@@ -7,7 +7,7 @@ const DESCRIPTIONS = [`Изучить теорию`, `Сделать домаш�
 const TAGS = [`homework`, `theory`, `practice`, `intensive`, `keks`];
 const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
-const generateData = () => ({
+export const generateData = () => ({
   get description() {
     return DESCRIPTIONS[getRandomInt(0, DESCRIPTIONS.length - 1)];
   },
@@ -36,6 +36,3 @@ const generateData = () => ({
   isArchive: getRandomBool(),
 });
 
-export const getMock = (quantity) => {
-  return [...Array(quantity)].map(generateData);
-};
