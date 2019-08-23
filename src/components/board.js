@@ -1,13 +1,14 @@
 import {getBoardFilterComponent} from './board-filter';
+import {getNoTasksBoardTemplate} from './board-no-tasks';
 import {getLoadMoreComponent} from "./load-more";
 
-export const getBoardComponent = () => {
+export const getBoardComponent = (tasksQuantity) => {
   return `
 		<section class="board container">
-	     ${getBoardFilterComponent()}
-	    <div class="board__tasks">
-      </div>
-       ${getLoadMoreComponent()}
+		${!tasksQuantity ? getNoTasksBoardTemplate() : `
+      ${getBoardFilterComponent()}
+        <div class="board__tasks"></div>
+         ${getLoadMoreComponent()}`}
 	  </section>
 	`;
 };

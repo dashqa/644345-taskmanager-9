@@ -8,13 +8,12 @@ import Card from './components/card';
 import CardEdit from './components/card-edit';
 
 
-const CARDS_QUANTITY = 15;
+const CARDS_QUANTITY = 10;
 const CARDS_PER_PAGE = 8;
 const mainContainer = document.querySelector(`.main`);
 const controlContainer = mainContainer.querySelector(`.control`);
 
 const taskMocks = [...Array(CARDS_QUANTITY)].map(generateData);
-const leftToShow = () =>  taskMocks.length - quantityCounter;
 const updateQuantityCounter = (quantity) => quantityCounter += quantity;
 let quantityCounter = 0;
 let tasksForRender = [];
@@ -26,34 +25,30 @@ const renderTask = (taskMock) => {
 
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
-      cardsContainer.replaceChild(task.getElement(), taskEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      onSaveButtonClick();
     }
   };
 
-  task.getElement()
-    .querySelector(`.card__btn--edit`)
-    .addEventListener(`click`, () => {
-      cardsContainer.replaceChild(taskEdit.getElement(), task.getElement());
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+  const onSaveButtonClick = () => {
+    cardsContainer.replaceChild(task.getElement(), taskEdit.getElement());
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
 
-  taskEdit.getElement().querySelector(`textarea`)
-    .addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
+  const onEditButtonClick = () => {
+    cardsContainer.replaceChild(taskEdit.getElement(), task.getElement());
+    document.addEventListener(`keydown`, onEscKeyDown);
+  };
 
-  taskEdit.getElement().querySelector(`textarea`)
-    .addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+  taskEdit.getElement().querySelector(`textarea`).addEventListener(`focus`, () => {
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
+  taskEdit.getElement().querySelector(`textarea`).addEventListener(`blur`, () => {
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
-  taskEdit.getElement()
-    .querySelector(`.card__save`)
-    .addEventListener(`click`, () => {
-      cardsContainer.replaceChild(task.getElement(), taskEdit.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
+  task.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, onEditButtonClick);
+  taskEdit.getElement().querySelector(`.card__save`).addEventListener(`click`, onSaveButtonClick);
+  taskEdit.getElement().querySelector(`.card__form`).addEventListener(`submit`, onSaveButtonClick);
 
   render(cardsContainer, task.getElement(), Position.BEFOREEND);
 };
@@ -71,12 +66,12 @@ const renderTasks = (start = 0, end = CARDS_PER_PAGE) => {
 render(controlContainer, createElement(getNavMenuComponent()), Position.BEFOREEND);
 render(mainContainer, createElement(getSearchComponent()), Position.BEFOREEND);
 render(mainContainer, createElement(getFilterComponent(taskMocks)), Position.BEFOREEND);
-render(mainContainer, createElement(getBoardComponent()), Position.BEFOREEND);
+render(mainContainer, createElement(getBoardComponent(taskMocks.length)), Position.BEFOREEND);
 renderTasks();
 
 const onClickMoreButton = () => {
   const start = quantityCounter;
-  const end = quantityCounter + leftToShow();
+  const end = quantityCounter + CARDS_PER_PAGE;
   renderTasks(start, end);
 };
 
