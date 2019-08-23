@@ -27,7 +27,7 @@ class Card {
   getTemplate() {
     return `
       <article class="card card--${this._color} 
-            ${Object.values(this._repeatingDays).some((it) => it === true) ? `card--repeat` : `` }">
+            ${Object.values(this._repeatingDays).some((day) => day === true) ? `card--repeat` : `` }">
         <div class="card__form">
           <div class="card__inner">
             <div class="card__control">

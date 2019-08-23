@@ -6,9 +6,8 @@ export const Position = {
   BEFOREEND: `beforeend`
 };
 
-export const createElement = (template, tag = `div`, classNames) => {
-  const element = document.createElement(tag);
-  classNames ? classNames.forEach((name) => element.classList.add(name)) : ``;
+export const createElement = (template) => {
+  const element = document.createElement(`div`);
   element.innerHTML = template;
   return element;
 };
