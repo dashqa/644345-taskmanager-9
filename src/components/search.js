@@ -1,5 +1,8 @@
-export const getSearchComponent = () => {
-  return `
+import DefaultComponent from "./default-component";
+
+class Search extends DefaultComponent {
+  getTemplate() {
+    return `
 		<section class="main__search search container">
       <input
         type="text"
@@ -9,5 +12,8 @@ export const getSearchComponent = () => {
       />
       <label class="visually-hidden" for="search__input">Search</label>
     </section>
-	`;
-};
+	`.trim();
+  }
+}
+
+export default Search;

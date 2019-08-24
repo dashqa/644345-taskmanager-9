@@ -1,5 +1,11 @@
-export const getLoadMoreComponent = () => {
-  return `
-    <button class="load-more" type="button">load more</button>
-  `;
-};
+import DefaultComponent from './default-component';
+
+class LoadMore extends DefaultComponent {
+  getTemplate() {
+    return `
+      <button class="load-more" type="button">load more</button>
+  `.trim();
+  }
+}
+
+export default LoadMore;

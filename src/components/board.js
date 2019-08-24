@@ -1,14 +1,18 @@
-import {getBoardFilterComponent} from './board-filter';
-import {getNoTasksBoardTemplate} from './board-no-tasks';
-import {getLoadMoreComponent} from "./load-more";
+import DefaultComponent from "./default-component";
 
-export const getBoardComponent = (tasksQuantity) => {
-  return `
-		<section class="board container">
-		${!tasksQuantity ? getNoTasksBoardTemplate() : `
-      ${getBoardFilterComponent()}
-        <div class="board__tasks"></div>
-         ${getLoadMoreComponent()}`}
-	  </section>
-	`;
-};
+class Board extends DefaultComponent {
+  constructor(tasksQuantity) {
+    super();
+    this._tasksQuantity = tasksQuantity;
+  }
+
+  getTemplate() {
+    return `
+    <section class="board container">
+     ${!this._tasksQuantity ? `<p class="board__no-tasks">
+          Congratulations, all tasks were completed! To create a new click on«add new task» button.
+      </p>`.trim() : ``}</section>`.trim();
+  }
+}
+
+export default Board;
