@@ -1,8 +1,9 @@
 import moment from 'moment';
-import {createElement} from './../utils';
+import DefaultComponent from './default-component';
 
-class Card {
+class Card extends DefaultComponent {
   constructor({description, dueDate, repeatingDays, tags, color, isFavorite, isArchive}) {
+    super();
     this._description = description;
     this._dueDate = dueDate;
     this._repeatingDays = repeatingDays;
@@ -10,19 +11,8 @@ class Card {
     this._color = color;
     this._isFavorite = isFavorite;
     this._isArchive = isArchive;
-    this._element = null;
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 
   getTemplate() {
     return `
@@ -80,7 +70,7 @@ class Card {
           </div>
         </div>
       </article>
-	`;
+	`.trim();
   }
 }
 

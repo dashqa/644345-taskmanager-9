@@ -1,5 +1,9 @@
-export const getNavMenuComponent = () => {
-  return `
+import DefaultComponent from "./default-component";
+
+class NavMenu extends DefaultComponent {
+
+  getTemplate() {
+    return `
     <section class="control__btn-wrap">
       <input
         type="radio"
@@ -28,5 +32,8 @@ export const getNavMenuComponent = () => {
         >STATISTICS</label
       >
     </section>
-  `;
-};
+  `.trim();
+  }
+}
+
+export default NavMenu;
