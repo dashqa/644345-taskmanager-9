@@ -32,36 +32,35 @@ class BoardController {
   _renderTask(task) {
     const taskComponent = new Card(task);
     const taskEditComponent = new CardEdit(task);
+    const currentTask = taskComponent.getElement();
+    const currentTaskEdit = taskEditComponent.getElement();
+    const taskListElement = this._taskList.getElement();
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === KeyCode.ESCAPE || evt.key === KeyCode.ESCAPE_IE) {
+      if (evt.keyCode === KeyCode.ESCAPE || evt.keyCode === KeyCode.ESCAPE_IE) {
         onSaveButtonClick();
       }
     };
 
     const onSaveButtonClick = () => {
-      this._taskList.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+      taskListElement.replaceChild(currentTask, currentTaskEdit);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     const onEditButtonClick = () => {
-      this._taskList.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+      taskListElement.replaceChild(currentTaskEdit, currentTask);
       document.addEventListener(`keydown`, onEscKeyDown);
     };
 
-    taskEditComponent.getElement().querySelector(`textarea`).addEventListener(`focus`, () => {
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-    taskEditComponent.getElement().querySelector(`textarea`).addEventListener(`blur`, () => {
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+    const textareaElement = currentTaskEdit.querySelector(`.card__text`);
+    textareaElement.addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeyDown));
+    textareaElement.addEventListener(`focus`, () => document.removeEventListener(`keydown`, onEscKeyDown));
 
-    taskComponent.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, onEditButtonClick);
-    taskEditComponent.getElement().querySelector(`.card__save`).addEventListener(`click`, onSaveButtonClick);
-    taskEditComponent.getElement().querySelector(`.card__form`).addEventListener(`submit`, onSaveButtonClick);
+    currentTask.querySelector(`.card__btn--edit`).addEventListener(`click`, onEditButtonClick);
+    currentTaskEdit.querySelector(`.card__save`).addEventListener(`click`, onSaveButtonClick);
+    currentTaskEdit.querySelector(`.card__form`).addEventListener(`submit`, onSaveButtonClick);
 
-
-    render(this._taskList.getElement(), taskComponent.getElement(), Position.BEFOREEND);
+    render(taskListElement, currentTask, Position.BEFOREEND);
   }
 
   _renderTasks(tasksArray, start = 0, end = CARDS_PER_PAGE) {
@@ -86,7 +85,7 @@ class BoardController {
   _onSortLinkClick(evt) {
     evt.preventDefault();
 
-    if (evt.target.tagName !== `A`) {
+    if (evt.target.className !== `board__filter`) {
       return;
     }
 
