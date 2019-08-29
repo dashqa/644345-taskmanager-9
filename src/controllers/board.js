@@ -1,11 +1,10 @@
-import Board from './../board';
-import Sorting from './../sorting';
-import CardList from '../card-list';
-import Card from '../card';
-import CardEdit from '../card-edit';
-import LoadMore from '../load-more';
-import {render} from '../../utils';
-import {CARDS_PER_PAGE, KeyCode, Position} from '../../config';
+import Board from '../components/board';
+import Sorting from '../components/sorting';
+import CardList from '../components/card-list';
+import LoadMore from '../components/load-more';
+import TaskController from '../controllers/task';
+import {render} from '../utils';
+import {CARDS_PER_PAGE, Position} from '../config';
 
 class BoardController {
   constructor(container, tasks) {
@@ -15,56 +14,47 @@ class BoardController {
     this._loadMore = new LoadMore();
     this._sorting = new Sorting();
     this._taskList = new CardList();
+
+    this._subscriptions = [];
+    this._onChangeView = this._onChangeView.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
     render(this._container, this._board.getElement(), Position.BEFOREEND);
     render(this._board.getElement(), this._sorting.getElement(), Position.AFTERBEGIN);
-    render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
-
+    this._renderBoard();
     this._renderTasks(this._tasks);
-    this._tasks.length > CARDS_PER_PAGE ? this._renderLoadMore(CARDS_PER_PAGE) : ``;
 
     this._sorting.getElement()
       .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
   }
 
+  _renderBoard() {
+    this._taskList.removeElement();
+    render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
+    if (this._tasks.length > CARDS_PER_PAGE) {
+      this._renderLoadMore(CARDS_PER_PAGE);
+    }
+  }
+
   _renderTask(task) {
-    const taskComponent = new Card(task);
-    const taskEditComponent = new CardEdit(task);
-    const currentTask = taskComponent.getElement();
-    const currentTaskEdit = taskEditComponent.getElement();
-    const taskListElement = this._taskList.getElement();
-
-    const onEscKeyDown = (evt) => {
-      if (evt.keyCode === KeyCode.ESCAPE || evt.keyCode === KeyCode.ESCAPE_IE) {
-        onSaveButtonClick();
-      }
-    };
-
-    const onSaveButtonClick = () => {
-      taskListElement.replaceChild(currentTask, currentTaskEdit);
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const onEditButtonClick = () => {
-      taskListElement.replaceChild(currentTaskEdit, currentTask);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const textareaElement = currentTaskEdit.querySelector(`.card__text`);
-    textareaElement.addEventListener(`blur`, () => document.addEventListener(`keydown`, onEscKeyDown));
-    textareaElement.addEventListener(`focus`, () => document.removeEventListener(`keydown`, onEscKeyDown));
-
-    currentTask.querySelector(`.card__btn--edit`).addEventListener(`click`, onEditButtonClick);
-    currentTaskEdit.querySelector(`.card__save`).addEventListener(`click`, onSaveButtonClick);
-    currentTaskEdit.querySelector(`.card__form`).addEventListener(`submit`, onSaveButtonClick);
-
-    render(taskListElement, currentTask, Position.BEFOREEND);
+    const taskController = new TaskController(this._taskList, task, this._onChangeView, this._onDataChange);
+    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
   }
 
   _renderTasks(tasksArray, start = 0, end = CARDS_PER_PAGE) {
     tasksArray.slice(start, end).map((task) => this._renderTask(task));
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
+  }
+
+  _onDataChange(newData, oldData) {
+    this._tasks[this._tasks.findIndex((task) => task === oldData)] = newData;
+    this._renderBoard();
+    this._renderTasks(this._tasks);
   }
 
   _renderLoadMore() {
@@ -76,7 +66,9 @@ class BoardController {
       const end = quantityCounter + CARDS_PER_PAGE;
       quantityCounter = end;
 
-      quantityCounter >= this._tasks.length ? this._loadMore.removeElement() : ``;
+      if (quantityCounter >= this._tasks.length) {
+        this._loadMore.removeElement();
+      }
       this._renderTasks(this._tasks, start, end);
     };
     this._loadMore.getElement().addEventListener(`click`, onClickMoreButton);

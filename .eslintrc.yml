@@ -8,3 +8,4 @@ env:
   commonjs: true
 
 extends: 'htmlacademy/es6'
+parser: 'babel-eslint'

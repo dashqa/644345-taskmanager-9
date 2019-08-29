@@ -17,8 +17,10 @@ class DefaultComponent {
   }
 
   removeElement() {
-    this._element.remove();
-    this._element = null;
+    if (this._element) {
+      this._element.remove();
+      this._element = null;
+    }
   }
 
   getTemplate() {

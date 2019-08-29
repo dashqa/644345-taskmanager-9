@@ -1,32 +1,40 @@
 import moment from 'moment';
-import DefaultComponent from "./default-component";
+import DefaultComponent from './default-component';
+import {CARD_COLORS} from './../config';
 
 class CardEdit extends DefaultComponent {
-  constructor({description, dueDate, tags, color, repeatingDays}) {
+  constructor({description, dueDate, tags, color, repeatingDays, isFavorite, isArchive}) {
     super();
     this._description = description;
     this._dueDate = dueDate;
     this._tags = tags;
     this._color = color;
     this._repeatingDays = repeatingDays;
+    this._isFavorite = isFavorite;
+    this._isArchive = isArchive;
+    this._isRepeating = Object.values(this._repeatingDays).some((day) => day === true);
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return `
       <article class="card card--edit card--${this._color} 
-        ${Object.values(this._repeatingDays).some((it) => it === true) ? `card--repeat` : `` }">
+        ${this._isRepeating ? `card--repeat` : `` }">
           <form class="card__form" method="get">
             <div class="card__inner">
               <div class="card__control">
-                <button type="button" class="card__btn card__btn--archive">
-                  archive
-                </button>
-                <button
-                  type="button"
-                  class="card__btn card__btn--favorites card__btn--disabled"
-                >
-                  favorites
-                </button>
+                <button 
+                type="button" 
+                class="card__btn card__btn--archive ${!this._isArchive ? `card__btn--disabled` : ``}">
+                archive
+              </button>
+              <button
+                type="button"
+                class="card__btn card__btn--favorites ${!this._isFavorite ? `card__btn--disabled` : ``}"
+              >
+                favorites
+              </button>
               </div>
       
               <div class="card__color-bar">
@@ -49,10 +57,10 @@ class CardEdit extends DefaultComponent {
                 <div class="card__details">
                   <div class="card__dates">
                     <button class="card__date-deadline-toggle" type="button">
-                      date: <span class="card__date-status">yes</span>
+                      date: <span class="card__date-status">${this._dueDate ? `yes` : `no`}</span>
                     </button>
       
-                    <fieldset class="card__date-deadline">
+                    <fieldset class="card__date-deadline ${!this._dueDate ? `disabled` : ``}">
                       <label class="card__input-deadline-wrap">
                         <input
                           class="card__date"
@@ -65,84 +73,20 @@ class CardEdit extends DefaultComponent {
                     </fieldset>
       
                     <button class="card__repeat-toggle" type="button">
-                      repeat:<span class="card__repeat-status">yes</span>
+                      repeat:<span class="card__repeat-status">${this._isRepeating ? `yes` : `no`}</span>
                     </button>
       
-                    <fieldset class="card__repeat-days">
+                    <fieldset class="card__repeat-days" ${!this._isRepeating ? `disabled` : ``}>
                       <div class="card__repeat-days-inner">
-                        <input
+                      ${Object.keys(this._repeatingDays).map((day) => (`<input
                           class="visually-hidden card__repeat-day-input"
                           type="checkbox"
-                          id="repeat-mo-4"
+                          id="repeat-${day}-4"
                           name="repeat"
-                          value="mo"
+                          value="${day}"
+                          ${this._repeatingDays[day] ? `checked` : ``}
                         />
-                        <label class="card__repeat-day" for="repeat-mo-4"
-                          >mo</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          id="repeat-tu-4"
-                          name="repeat"
-                          value="tu"
-                          checked
-                        />
-                        <label class="card__repeat-day" for="repeat-tu-4"
-                          >tu</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          id="repeat-we-4"
-                          name="repeat"
-                          value="we"
-                        />
-                        <label class="card__repeat-day" for="repeat-we-4"
-                          >we</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          id="repeat-th-4"
-                          name="repeat"
-                          value="th"
-                        />
-                        <label class="card__repeat-day" for="repeat-th-4"
-                          >th</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          id="repeat-fr-4"
-                          name="repeat"
-                          value="fr"
-                          checked
-                        />
-                        <label class="card__repeat-day" for="repeat-fr-4"
-                          >fr</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          name="repeat"
-                          value="sa"
-                          id="repeat-sa-4"
-                        />
-                        <label class="card__repeat-day" for="repeat-sa-4"
-                          >sa</label
-                        >
-                        <input
-                          class="visually-hidden card__repeat-day-input"
-                          type="checkbox"
-                          id="repeat-su-4"
-                          name="repeat"
-                          value="su"
-                          checked
-                        />
-                        <label class="card__repeat-day" for="repeat-su-4"
-                          >su</label
-                        >
+                      <label class="card__repeat-day" for="repeat-${day}-4">${day}</label>`.trim())).join(``)}
                       </div>
                     </fieldset>
                   </div>
@@ -159,7 +103,6 @@ class CardEdit extends DefaultComponent {
                           <p class="card__hashtag-name">
                            #${tag}
                           </p>
-                        <button type="button" class="card__hashtag-name">#${tag}</button>
                         <button type="button" class="card__hashtag-delete">
                           delete
                         </button>
@@ -179,67 +122,18 @@ class CardEdit extends DefaultComponent {
                 <div class="card__colors-inner">
                   <h3 class="card__colors-title">Color</h3>
                   <div class="card__colors-wrap">
-                    <input
-                      type="radio"
-                      id="color-black-4"
-                      class="card__color-input card__color-input--black visually-hidden"
-                      name="color"
-                      value="black"
-                    />
-                    <label
-                      for="color-black-4"
-                      class="card__color card__color--black"
-                      >black</label
-                    >
-                    <input
-                      type="radio"
-                      id="color-yellow-4"
-                      class="card__color-input card__color-input--yellow visually-hidden"
-                      name="color"
-                      value="yellow"
-                      checked
-                    />
-                    <label
-                      for="color-yellow-4"
-                      class="card__color card__color--yellow"
-                      >yellow</label
-                    >
-                    <input
-                      type="radio"
-                      id="color-blue-4"
-                      class="card__color-input card__color-input--blue visually-hidden"
-                      name="color"
-                      value="blue"
-                    />
-                    <label
-                      for="color-blue-4"
-                      class="card__color card__color--blue"
-                      >blue</label
-                    >
-                    <input
-                      type="radio"
-                      id="color-green-4"
-                      class="card__color-input card__color-input--green visually-hidden"
-                      name="color"
-                      value="green"
-                    />
-                    <label
-                      for="color-green-4"
-                      class="card__color card__color--green"
-                      >green</label
-                    >
-                    <input
-                      type="radio"
-                      id="color-pink-4"
-                      class="card__color-input card__color-input--pink visually-hidden"
-                      name="color"
-                      value="pink"
-                    />
-                    <label
-                      for="color-pink-4"
-                      class="card__color card__color--pink"
-                      >pink</label
-                    >
+                  ${CARD_COLORS.map((color) => `
+                      <input
+                        type="radio"
+                        id="color-${color}-4"
+                        class="card__color-input card__color-input--${color} visually-hidden"
+                        name="color"
+                        value="${color}"
+                        ${color === this._color ? `checked` : ``}
+                      />
+                      <label
+                        for="color-${color}-4"
+                        class="card__color card__color--${color}">${color}</label>`.trim()).join(``)}  
                   </div>
                 </div>
               </div>
@@ -251,6 +145,95 @@ class CardEdit extends DefaultComponent {
             </div>
           </form>
         </article>`.trim();
+  }
+
+  _onColorChange(evt) {
+    const classNames = CARD_COLORS.map((color) => `card--${color}`);
+    const containsClass = classNames.find((className) => this._element.classList.contains(className));
+
+    if (containsClass) {
+      this._element.classList.remove(`${containsClass}`);
+    }
+    this._element.classList.add(`card--${evt.target.value}`);
+  }
+
+  _onHashtagEnterKey(evt) {
+    if (evt.key === `Enter`) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      this._element.querySelector(`.card__hashtag-list`)
+        .insertAdjacentHTML(`beforeend`, `<span class="card__hashtag-inner">
+            <input
+              type="hidden"
+              name="hashtag"
+              value="${evt.target.value}"
+              class="card__hashtag-hidden-input"
+            />
+            <p class="card__hashtag-name">
+              #${evt.target.value}
+            </p>
+            <button type="button" class="card__hashtag-delete">
+              delete
+            </button>
+          </span>`);
+
+      this._element.querySelectorAll(`.card__hashtag-delete`).forEach((button) => {
+        button.addEventListener(`click`, this._onHashtagDelete.bind(this));
+      });
+      evt.target.value = ``;
+    }
+  }
+
+  _onHashtagDelete(evt) {
+    evt.target.parentElement.remove();
+  }
+
+  _onDateStatusClick(evt) {
+    evt.preventDefault();
+    const dateInput = this._element.querySelector(`.card__date`);
+    const dateStatus = this._element.querySelector(`.card__date-status`);
+    const deadline = this._element.querySelector(`.card__date-deadline`);
+
+    if (deadline.hasAttribute(`disabled`)) {
+      deadline.removeAttribute(`disabled`);
+      dateStatus.innerHTML = `yes`;
+      dateInput.value = moment.utc(this._dueDate);
+    } else {
+      deadline.setAttribute(`disabled`, `true`);
+      dateStatus.innerHTML = `no`;
+      dateInput.value = ``;
+    }
+  }
+
+  _onRepeatStatusClick(evt) {
+    evt.preventDefault();
+    const repeatStatus = this._element.querySelector(`.card__repeat-status`);
+    const repeatDays = this._element.querySelector(`.card__repeat-days`);
+    const inputs = this._element.querySelectorAll(`.card__repeat-day-input`);
+
+    if (repeatDays.hasAttribute(`disabled`)) {
+      repeatDays.removeAttribute(`disabled`);
+      this._element.classList.add(`card--repeat`);
+      repeatStatus.innerHTML = `yes`;
+    } else {
+      repeatDays.setAttribute(`disabled`, `true`);
+      this._element.classList.remove(`card--repeat`);
+      repeatStatus.innerHTML = `no`;
+      [...inputs].forEach((input) => (input.value = ``));
+    }
+  }
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.card__repeat-toggle`).addEventListener(`click`, this._onRepeatStatusClick.bind(this));
+    this.getElement().querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, this._onDateStatusClick.bind(this));
+    this.getElement().querySelector(`.card__hashtag-input`).addEventListener(`keydown`, this._onHashtagEnterKey.bind(this));
+    this.getElement().querySelectorAll(`.card__color-input`).forEach((input) => {
+      input.addEventListener(`change`, this._onColorChange.bind(this));
+    });
+    this.getElement().querySelectorAll(`.card__hashtag-delete`).forEach((button) => {
+      button.addEventListener(`click`, this._onHashtagDelete.bind(this));
+    });
+
   }
 }
 
