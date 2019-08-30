@@ -28,7 +28,6 @@ class TaskController {
       allowInput: true,
       enableTime: true,
       altFormat: `F j, Y h:i K`,
-      minDate: `today`,
       defaultDate: this._data.dueDate,
     });
 
