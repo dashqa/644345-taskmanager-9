@@ -12,7 +12,7 @@ class CardEdit extends DefaultComponent {
     this._repeatingDays = repeatingDays;
     this._isFavorite = isFavorite;
     this._isArchive = isArchive;
-    this._isRepeating = Object.values(this._repeatingDays).some((day) => day === true);
+    this._isRepeating = Object.values(this._repeatingDays).some((day) => day);
 
     this._subscribeOnEvents();
   }
@@ -158,7 +158,9 @@ class CardEdit extends DefaultComponent {
   }
 
   _onHashtagEnterKey(evt) {
-    if (evt.key === `Enter`) {
+    if (evt.key !== `Enter`) {
+      return;
+    }
       evt.preventDefault();
       evt.stopPropagation();
       this._element.querySelector(`.card__hashtag-list`)
@@ -181,7 +183,6 @@ class CardEdit extends DefaultComponent {
         button.addEventListener(`click`, this._onHashtagDelete.bind(this));
       });
       evt.target.value = ``;
-    }
   }
 
   _onHashtagDelete(evt) {
