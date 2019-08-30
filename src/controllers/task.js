@@ -3,6 +3,8 @@ import CardEdit from './../components/card-edit';
 import {render} from '../utils';
 import {Position} from '../config';
 import moment from 'moment';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 class TaskController {
   constructor(container, data, onChangeView, onDataChange) {
@@ -20,6 +22,14 @@ class TaskController {
     const currentTask = this._taskView.getElement();
     const currentTaskEdit = this._taskEdit.getElement();
     const textareaElement = currentTaskEdit.querySelector(`.card__text`);
+
+    flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `F j, Y h:i K`,
+      defaultDate: this._data.dueDate,
+    });
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
