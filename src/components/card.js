@@ -24,12 +24,14 @@ class Card extends DefaultComponent {
               <button type="button" class="card__btn card__btn--edit">
                 edit
               </button>
-              <button type="button" class="card__btn card__btn--edit ${this._isArchive ? `card__btn--archive` : ``}">
+              <button 
+                type="button" 
+                class="card__btn card__btn--archive ${!this._isArchive ? `card__btn--disabled` : ``}">
                 archive
               </button>
               <button
                 type="button"
-                class="card__btn ${this._isFavorite ? `card__btn--favorites` : ``}"
+                class="card__btn card__btn--favorites ${!this._isFavorite ? `card__btn--disabled` : ``}"
               >
                 favorites
               </button>

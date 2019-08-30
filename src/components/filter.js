@@ -14,10 +14,10 @@ class Filter extends DefaultComponent {
         count: this._tasks.length,
       }, {
         title: `Overdue`,
-        count: this._tasks.filter((task) => task.dueDate.isBefore(moment(), `day`)).length,
+        count: this._tasks.filter((task) => moment(task.dueDate).isBefore(moment(), `day`)).length,
       }, {
         title: `Today`,
-        count: this._tasks.filter((task) => task.dueDate.isSame(moment(), `day`)).length,
+        count: this._tasks.filter((task) => moment(task.dueDate).isSame(moment(), `day`)).length,
       }, {
         title: `Favorites`,
         count: this._tasks.filter((task) => task.isFavorite).length,

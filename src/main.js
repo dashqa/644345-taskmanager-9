@@ -2,11 +2,12 @@ import {generateData} from "./data/mock";
 import NavMenu from './components/nav-menu';
 import Search from './components/search';
 import Filter from './components/filter';
-import BoardController from './components/controllers/board';
+import BoardController from './controllers/board';
 import {CARDS_QUANTITY, PageElement, Position} from './config';
 import {render} from './utils';
 
-const taskMocks = [...Array(CARDS_QUANTITY)].map(generateData);
+const randomTasks = [...Array(CARDS_QUANTITY)].map(generateData);
+const taskMocks = JSON.parse(JSON.stringify(randomTasks));
 
 const nav = new NavMenu;
 const search = new Search;
