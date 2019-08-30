@@ -161,28 +161,28 @@ class CardEdit extends DefaultComponent {
     if (evt.key !== `Enter`) {
       return;
     }
-      evt.preventDefault();
-      evt.stopPropagation();
-      this._element.querySelector(`.card__hashtag-list`)
-        .insertAdjacentHTML(`beforeend`, `<span class="card__hashtag-inner">
-            <input
-              type="hidden"
-              name="hashtag"
-              value="${evt.target.value}"
-              class="card__hashtag-hidden-input"
-            />
-            <p class="card__hashtag-name">
-              #${evt.target.value}
-            </p>
-            <button type="button" class="card__hashtag-delete">
-              delete
-            </button>
-          </span>`);
+    evt.preventDefault();
+    evt.stopPropagation();
+    this._element.querySelector(`.card__hashtag-list`)
+      .insertAdjacentHTML(`beforeend`, `<span class="card__hashtag-inner">
+          <input
+            type="hidden"
+            name="hashtag"
+            value="${evt.target.value}"
+            class="card__hashtag-hidden-input"
+          />
+          <p class="card__hashtag-name">
+            #${evt.target.value}
+          </p>
+          <button type="button" class="card__hashtag-delete">
+            delete
+          </button>
+        </span>`);
 
-      this._element.querySelectorAll(`.card__hashtag-delete`).forEach((button) => {
-        button.addEventListener(`click`, this._onHashtagDelete.bind(this));
-      });
-      evt.target.value = ``;
+    this._element.querySelectorAll(`.card__hashtag-delete`).forEach((button) => {
+      button.addEventListener(`click`, this._onHashtagDelete.bind(this));
+    });
+    evt.target.value = ``;
   }
 
   _onHashtagDelete(evt) {
