@@ -1,13 +1,13 @@
 import Card from './../components/card';
 import CardEdit from './../components/card-edit';
 import {render} from '../utils';
-import {Position} from '../config';
+import {Position, TaskControllerMode} from '../config';
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 class TaskController {
-  constructor(container, data, onChangeView, onDataChange) {
+  constructor(container, data, mode, onChangeView, onDataChange) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
@@ -15,13 +15,21 @@ class TaskController {
     this._taskView = new Card(data);
     this._taskEdit = new CardEdit(data);
 
-    this.create();
+    this.create(mode);
   }
 
-  create() {
+  create(mode) {
     const currentTask = this._taskView.getElement();
     const currentTaskEdit = this._taskEdit.getElement();
     const textareaElement = currentTaskEdit.querySelector(`.card__text`);
+
+    let renderPosition = Position.BEFOREEND;
+    let currentView = this._taskView;
+
+    if (mode === TaskControllerMode.ADDING) {
+      renderPosition = Position.AFTERBEGIN;
+      currentView = this._taskEdit;
+    }
 
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
@@ -33,7 +41,11 @@ class TaskController {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this.setDefaultView();
+        if (mode === TaskControllerMode.DEFAULT) {
+          this.setDefaultView();
+        } else if (mode === TaskControllerMode.ADDING) {
+          this._container.removeChild(currentView.getElement());
+        }
       }
     };
 
@@ -59,13 +71,18 @@ class TaskController {
         })
       };
 
-      this._onDataChange(entry, this._data);
+      this._onDataChange(entry, mode === TaskControllerMode.DEFAULT ? this._data : null);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    };
+
+    const onDeleteButtonClick = () => {
+      this._onDataChange(null, this._data);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     const onEditButtonClick = () => {
       this._onChangeView();
-      this._container.getElement().replaceChild(currentTaskEdit, currentTask);
+      this._container.replaceChild(currentTaskEdit, currentTask);
       document.addEventListener(`keydown`, onEscKeyDown);
     };
 
@@ -96,6 +113,7 @@ class TaskController {
 
     currentTask.querySelector(`.card__btn--edit`).addEventListener(`click`, onEditButtonClick);
     currentTaskEdit.querySelector(`.card__save`).addEventListener(`click`, onSaveButtonClick);
+    currentTaskEdit.querySelector(`.card__delete`).addEventListener(`click`, onDeleteButtonClick.bind(this._data));
 
     currentTask.querySelector(`.card__btn--favorites`).addEventListener(`click`, onFavoriteButtonClick.bind(this._data));
     currentTaskEdit.querySelector(`.card__btn--favorites`).addEventListener(`click`, onFavoriteButtonClick.bind(this._data));
@@ -103,12 +121,12 @@ class TaskController {
     currentTask.querySelector(`.card__btn--archive`).addEventListener(`click`, onArchiveButtonClick.bind(this._data));
     currentTaskEdit.querySelector(`.card__btn--archive`).addEventListener(`click`, onArchiveButtonClick.bind(this._data));
 
-    render(this._container.getElement(), currentTask, Position.BEFOREEND);
+    render(this._container, currentView.getElement(), renderPosition);
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._taskEdit.getElement())) {
-      this._container.getElement().replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
+    if (this._container.contains(this._taskEdit.getElement())) {
+      this._container.replaceChild(this._taskView.getElement(), this._taskEdit.getElement());
     }
   }
 }

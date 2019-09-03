@@ -1,9 +1,9 @@
-import DefaultComponent from "./default-component";
+import DefaultComponent from './default-component';
 
 class Search extends DefaultComponent {
   getTemplate() {
     return `
-		<section class="main__search search container">
+    <section class="main__search search container">
       <input
         type="text"
         id="search__input"
@@ -12,7 +12,7 @@ class Search extends DefaultComponent {
       />
       <label class="visually-hidden" for="search__input">Search</label>
     </section>
-	`.trim();
+  `.trim();
   }
 }
 
