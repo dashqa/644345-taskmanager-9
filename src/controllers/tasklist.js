@@ -58,15 +58,15 @@ class TaskListController {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _onDataChange(newData, oldData) {
-    const index = this._tasks.indexOf(oldData);
+  _onDataChange(newTask, oldTask) {
+    const index = this._tasks.indexOf(oldTask);
 
-    if (newData === null) {
+    if (!newTask) {
       this._tasks = [...this._tasks.slice(0, index), ...this._tasks.slice(index + 1)];
-    } else if (oldData === null) {
-      this._tasks = [newData, ...this._tasks];
+    } else if (!oldTask) {
+      this._tasks = [newTask, ...this._tasks];
     } else {
-      this._tasks[index] = newData;
+      this._tasks[index] = newTask;
     }
 
     this.setTasks(this._tasks);

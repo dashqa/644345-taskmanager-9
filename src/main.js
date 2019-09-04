@@ -21,48 +21,41 @@ render(PageElement.MAIN, search.getElement(), Position.BEFOREEND);
 render(PageElement.MAIN, filter.getElement(), Position.BEFOREEND);
 const boardController = new BoardController(PageElement.MAIN);
 boardController.show(taskMocks);
+render(PageElement.MAIN, statistics.getElement(), Position.BEFOREEND);
 
 const onSearchBackButtonClick = () => {
   statistics.getElement().classList.add(`visually-hidden`);
   searchController.hide();
   boardController.show(taskMocks);
 };
+
+const onAddTaskButtonClick = (evt) => {
+  boardController.createTask();
+  // Вернем выделенный элемент
+  PageElement.MAIN.querySelector(`#${evt.target.id}`).checked = true;
+};
+
+const onStatisticButtonClick = () => {
+  boardController.hide();
+  statistics.getElement().classList.remove(`visually-hidden`);
+};
+
+const onTasksButtonClick = () => {
+  statistics.getElement().classList.add(`visually-hidden`);
+  boardController.show();
+};
+
+nav.getElement().querySelector(`#control__new-task`).addEventListener(`click`, onAddTaskButtonClick);
+nav.getElement().querySelector(`#control__task`).addEventListener(`click`, onTasksButtonClick);
+nav.getElement().querySelector(`#control__statistic`).addEventListener(`click`, onStatisticButtonClick);
+
 const searchController = new SearchController(PageElement.MAIN, search, onSearchBackButtonClick);
-
-render(PageElement.MAIN, statistics.getElement(), Position.BEFOREEND);
-
-nav.getElement().addEventListener(`change`, (evt) => {
-  evt.preventDefault();
-  if (evt.target.tagName !== `INPUT`) {
-    return;
-  }
-
-  const tasksId = `control__task`;
-  const statisticId = `control__statistic`;
-  const newTaskId = `control__new-task`;
-
-  switch (evt.target.id) {
-    case tasksId:
-      statistics.getElement().classList.add(`visually-hidden`);
-      boardController.show();
-      break;
-    case statisticId:
-      boardController.hide();
-      statistics.getElement().classList.remove(`visually-hidden`);
-      break;
-    case newTaskId:
-      boardController.createTask();
-      // Вернем выделенный элемент
-      PageElement.MAIN.querySelector(`#${tasksId}`).checked = true;
-      break;
-  }
-});
-
 search.getElement().addEventListener(`click`, () => {
   statistics.getElement().classList.add(`visually-hidden`);
   boardController.hide();
   searchController.show(taskMocks);
 });
+
 
 
 
