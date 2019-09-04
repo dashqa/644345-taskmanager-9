@@ -23,8 +23,8 @@ class TaskController {
     const currentTaskEdit = this._taskEdit.getElement();
     const textareaElement = currentTaskEdit.querySelector(`.card__text`);
 
-    let renderPosition = mode === TaskControllerMode.ADDING ? Position.AFTERBEGIN : Position.BEFOREEND;
-    let currentView = mode === TaskControllerMode.ADDING ? this._taskEdit : this._taskView;
+    const renderPosition = mode === TaskControllerMode.ADDING ? Position.AFTERBEGIN : Position.BEFOREEND;
+    const currentView = mode === TaskControllerMode.ADDING ? this._taskEdit : this._taskView;
 
     flatpickr(this._taskEdit.getElement().querySelector(`.card__date`), {
       altInput: true,
